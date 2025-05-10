@@ -8,8 +8,7 @@ context_switch:
     pop %es
     pop %ds
     // Discard tf_trapno and tf_err
-    popl %eax
-    popl %eax
+    add $8, %esp
     // Return to user space
     iret
 spin:

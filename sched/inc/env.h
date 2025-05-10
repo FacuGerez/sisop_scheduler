@@ -37,6 +37,11 @@ enum EnvType {
 	ENV_TYPE_USER = 0,
 };
 
+// We use the priority scale of the Completely Fair Scheduler (CFS)
+#define MIN_PRIORITY -20
+#define DEFAULT_PRIORITY 0
+#define MAX_PRIORITY 19
+
 struct Env {
 	struct Trapframe env_tf;  // Saved registers
 	struct Env *env_link;     // Next free Env
@@ -46,6 +51,7 @@ struct Env {
 	unsigned env_status;      // Status of the environment
 	uint32_t env_runs;        // Number of times environment has run
 	int env_cpunum;           // The CPU that the env is running on
+	int priority;
 
 	// Address space
 	pde_t *env_pgdir;  // Kernel virtual address of page dir

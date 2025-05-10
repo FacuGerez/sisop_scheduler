@@ -4,6 +4,22 @@
 #include <kern/env.h>
 #include <kern/pmap.h>
 #include <kern/monitor.h>
+#include <kern/sched.h>
+
+HistoryScheduler history_scheduler;
+
+void show_sched_history() {
+	// for history_scheduler.envs mostrar los IDS (primera posición) y mostrar cuantas veces runneo accediendo a la segunda posicion
+	// mostrar los runs totales, que deberían ser igual a sum(for history_scheduler.envs[1])
+}
+
+void sched_init() {
+	for (int i = 0; i < SIZE_ENVS; i++) {
+		history_scheduler.envs[i][0] = -1;
+		history_scheduler.envs[i][1] = 0;
+	}
+	history_scheduler.runs = 0;
+}
 
 void sched_halt(void);
 
@@ -40,6 +56,21 @@ sched_yield(void)
 	// environment is selected and run every time.
 
 	// Your code here - Priorities
+	
+	int index_max_priority = -1;
+	for (i = 0; i < NENV; i++) {
+		if (envs[i].env_status == ENV_RUNNABLE && (index_max_priority == -1 || envs[i].priority > envs[index_max_priority].priority)) {
+			index_max_priority = i;
+			curenv = envs[i];
+		}
+	}
+
+	if (curenv) {
+		// agregarlo al array mirando que ya no esté el ID (mirando el history_scheduler.envs[0]: id) y le sumas +=1 a history_scheduler.envs[1]
+		// siempre += 1 al history_scheduler.runs
+		env_run(curenv);
+	}
+
 #endif
 
 	// Without scheduler, keep runing the last environment while it exists

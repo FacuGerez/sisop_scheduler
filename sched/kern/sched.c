@@ -6,19 +6,37 @@
 #include <kern/monitor.h>
 #include <kern/sched.h>
 
-HistoryScheduler history_scheduler;
 
 void show_sched_history() {
 	// for history_scheduler.envs mostrar los IDS (primera posición) y mostrar cuantas veces runneo accediendo a la segunda posicion
 	// mostrar los runs totales, que deberían ser igual a sum(for history_scheduler.envs[1])
+	cprintf("Scheduler history:\n");
+	for (int i = 0; i < history_scheduler.counter; i++) {
+		cprintf("Env ID: %d, Runs: %d, Initial Env: %d, Final Env: %d\n",
+		        history_scheduler.envs[i].env_id,
+		        history_scheduler.envs[i].sched_runs,
+		        history_scheduler.envs[i].initial_env,
+		        history_scheduler.envs[i].final_env);
+	}
+	cprintf("Total runs: %d\n", history_scheduler.runs_counter);
 }
 
 void sched_init() {
-	for (int i = 0; i < SIZE_ENVS; i++) {
-		history_scheduler.envs[i][0] = -1;
-		history_scheduler.envs[i][1] = 0;
+	// Initialize the scheduler
+	history_scheduler.counter = 0;
+	history_scheduler.runs_counter = 0;
+}
+
+void sched_add_env(env_info *e) {
+	// Add the environment to the history
+	if (history_scheduler.counter >= SIZE_ENVS) {
+		return;
 	}
-	history_scheduler.runs = 0;
+	history_scheduler.envs[history_scheduler.counter].env_id = e->env_id;
+	history_scheduler.envs[history_scheduler.counter].sched_runs = e->sched_runs;
+	history_scheduler.envs[history_scheduler.counter].initial_env = e->initial_env;
+	history_scheduler.envs[history_scheduler.counter].final_env = history_scheduler.runs_counter;
+	history_scheduler.counter++;
 }
 
 void sched_halt(void);
@@ -27,6 +45,7 @@ void sched_halt(void);
 void
 sched_yield(void)
 {
+history_scheduler.runs_counter++;
 #ifdef SCHED_ROUND_ROBIN
 	// Implement simple round-robin scheduling.
 	//
@@ -56,7 +75,7 @@ sched_yield(void)
 	// environment is selected and run every time.
 
 	// Your code here - Priorities
-	
+
 	int index_max_priority = -1;
 	for (i = 0; i < NENV; i++) {
 		if (envs[i].env_status == ENV_RUNNABLE && (index_max_priority == -1 || envs[i].priority > envs[index_max_priority].priority)) {

@@ -44,10 +44,6 @@
 
 .text
 
-/*
- * Lab 3: Your code here for generating entry points for the different traps.
- */
-
 TRAPHANDLER_NOEC(trap0, T_DIVIDE)
 TRAPHANDLER_NOEC(trap1, T_DEBUG)
 TRAPHANDLER_NOEC(trap2, T_NMI)
@@ -73,8 +69,13 @@ TRAPHANDLER_NOEC(trap32, IRQ_OFFSET + IRQ_TIMER)
 
 TRAPHANDLER_NOEC(trap48, T_SYSCALL)
 
-
-/*
- * Your code here for _alltraps
- */
 _alltraps:
+    // Save %ds and %es
+    push %ds
+    push %es
+    // Save all general-purpose registers
+    pushal
+    // Load the Trapframe address (the stack itself)
+    pushl %esp
+    // Call trap function in C
+    call trap

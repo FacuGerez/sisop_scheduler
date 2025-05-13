@@ -503,12 +503,15 @@ env_run(struct Env *e)
 	//	   4. Update its 'env_runs' counter,
 	//	   5. Use env_load_pgdir() to switch to its address space.
 
-	// Hint: This function loads the new environment's state from
-	//	e->env_tf.  Go back through the code you wrote above
-	//	and make sure you have set the relevant parts of
-	//	e->env_tf to sensible values.
-	// Your code here
+	if (curenv && curenv->env_status == ENV_RUNNING) {
+		curenv->env_status = ENV_RUNNABLE;
+	}
+
 	curenv = e;
+	curenv->env_status = ENV_RUNNING;
+	curenv->env_runs++;
+
+	env_load_pgdir(curenv);
 
 	// Needed if we run with multiple procesors
 	// Record the CPU we are running on for user-space debugging
@@ -519,6 +522,4 @@ env_run(struct Env *e)
 	//	   registers and drop into user mode in the
 	//	   environment.
 	context_switch(&e->env_tf);
-
-	panic("env_run not yet implemented"); /* mostly to placate the compiler */
 }

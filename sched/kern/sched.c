@@ -99,6 +99,8 @@ history_scheduler.runs_counter++;
 
 	// sched_halt never returns
 	sched_halt();
+	panic("No runnable environments!");
+	// sched_halt never returns
 }
 
 // Halt this CPU when there is nothing to do. Wait until the

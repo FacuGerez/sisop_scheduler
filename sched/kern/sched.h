@@ -16,13 +16,13 @@ struct sched_history {
     int runs_counter;
 } typedef sched_history;
 
+sched_history history_scheduler;
+
 void sched_init();
 
 void sched_add_env(env_info *e);
 
 void show_sched_history();
-
-sched_history history_scheduler;
 
 // This function does not return.
 void sched_yield(void) __attribute__((noreturn));

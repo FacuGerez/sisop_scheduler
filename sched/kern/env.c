@@ -227,6 +227,9 @@ env_alloc(struct Env **newenv_store, envid_t parent_id)
 	e->env_type = ENV_TYPE_USER;
 	e->env_status = ENV_RUNNABLE;
 	e->env_runs = 0;
+	e->sched_runs = 0;
+	e->initial_env = history_scheduler.runs_counter;
+	e->priority = DEFAULT_PRIORITY;
 
 	// Clear out all the saved register state,
 	// to prevent the register values
@@ -398,6 +401,9 @@ env_create(uint8_t *binary, enum EnvType type)
 
 	load_icode(env, binary);
 	env->env_type = type;
+	env->priority = DEFAULT_PRIORITY;
+	env->sched_runs = 0;
+	env->initial_env = history_scheduler.runs_counter;
 }
 
 //
@@ -409,6 +415,14 @@ env_free(struct Env *e)
 	pte_t *pt;
 	uint32_t pdeno, pteno;
 	physaddr_t pa;
+
+	env_info e_info;
+	e_info.env_id = e->env_id;
+	e_info.sched_runs = e->sched_runs;
+	e_info.initial_env = e->initial_env;
+	e_info.final_env = 0;
+
+	sched_add_env(&e_info);
 
 	// If freeing the current environment, switch to kern_pgdir
 	// before freeing the page directory, just in case the page
@@ -507,6 +521,7 @@ env_run(struct Env *e)
 		curenv->env_status = ENV_RUNNABLE;
 	}
 
+	e->sched_runs++;
 	curenv = e;
 	curenv->env_status = ENV_RUNNING;
 	curenv->env_runs++;

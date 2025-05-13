@@ -6,6 +6,13 @@
 #include <inc/env.h>
 #include <kern/cpu.h>
 
+struct env_info {
+	int env_id;
+	int sched_runs;
+	int initial_env;
+	int final_env;
+} typedef env_info;
+
 extern struct Env *envs;           // All environments
 #define curenv (thiscpu->cpu_env)  // Current environment
 extern struct Segdesc gdt[];

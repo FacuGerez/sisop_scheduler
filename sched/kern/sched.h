@@ -16,7 +16,7 @@ struct sched_history {
     int runs_counter;
 } typedef sched_history;
 
-sched_history history_scheduler;
+extern sched_history history_scheduler;
 
 void sched_init();
 

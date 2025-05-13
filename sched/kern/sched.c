@@ -81,7 +81,7 @@ history_scheduler.runs_counter++;
 	for (int i = 0; i < NENV; i++) {
 		if (envs[i].env_status == ENV_RUNNABLE && (index_max_priority == -1 || envs[i].priority > envs[index_max_priority].priority)) {
 			index_max_priority = i;
-			curenv = envs[i];
+			curenv = &envs[i];
 		}
 	}
 

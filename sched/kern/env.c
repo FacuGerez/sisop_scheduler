@@ -521,7 +521,9 @@ env_run(struct Env *e)
 		curenv->env_status = ENV_RUNNABLE;
 	}
 
+	// TODO: Mover si es necesario.
 	e->sched_runs++;
+
 	curenv = e;
 	curenv->env_status = ENV_RUNNING;
 	curenv->env_runs++;

@@ -85,21 +85,28 @@ sched_yield(void)
 
 	// Your code here - Priorities
 
+	struct Env* e = NULL;
+
 	int index_max_priority = -1;
 	for (int i = 0; i < NENV; i++) {
 		if (envs[i].env_status == ENV_RUNNABLE && (index_max_priority == -1 || envs[i].priority > envs[index_max_priority].priority)) {
 			index_max_priority = i;
-			curenv = &envs[i];
+			e = &envs[i];
 		}
 	}
 
-	if (curenv) {
+	if (e) {
 		// agregarlo al array mirando que ya no esté el ID (mirando el history_scheduler.envs[0]: id) y le sumas +=1 a history_scheduler.envs[1]
 		// siempre += 1 al history_scheduler.runs
-		sched_update_priority(curenv);
+		sched_update_priority(e);
+		env_run(e);
+	}
+
+	if (curenv) {
 		env_run(curenv);
 	}
 
+	sched_halt();
 #endif
 
 	// Without scheduler, keep runing the last environment while it exists

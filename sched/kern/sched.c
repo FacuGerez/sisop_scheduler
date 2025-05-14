@@ -40,13 +40,21 @@ void sched_add_env(env_info *e) {
 	history_scheduler.counter++;
 }
 
+void sched_update_priority(struct Env *e) {
+	for (int i = 0; i < NENV; i++) {
+		if (envs[i].env_id == e->env_id && envs[i].priority > MIN_PRIORITY) {
+			envs[i].priority--;
+		}
+	}}
+
 void sched_halt(void);
 
 // Choose a user environment to run and run it.
 void
 sched_yield(void)
 {
-history_scheduler.runs_counter++;
+	history_scheduler.runs_counter++;
+
 #ifdef SCHED_ROUND_ROBIN
 	// Implement simple round-robin scheduling.
 	//
@@ -66,7 +74,7 @@ history_scheduler.runs_counter++;
 	// Your code here - Round robin
 #endif
 
-#ifdef SCHED_PRIORITIES
+#ifdef SCHED_PRIORITIES	
 	// Implement simple priorities scheduling.
 	//
 	// Environments now have a "priority" so it must be consider
@@ -88,6 +96,7 @@ history_scheduler.runs_counter++;
 	if (curenv) {
 		// agregarlo al array mirando que ya no esté el ID (mirando el history_scheduler.envs[0]: id) y le sumas +=1 a history_scheduler.envs[1]
 		// siempre += 1 al history_scheduler.runs
+		sched_update_priority(curenv);
 		env_run(curenv);
 	}
 

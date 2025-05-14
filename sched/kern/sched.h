@@ -22,6 +22,8 @@ void sched_init();
 
 void sched_add_env(env_info *e);
 
+void sched_update_priority(struct Env *e);
+
 void show_sched_history();
 
 // This function does not return.

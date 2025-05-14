@@ -38,9 +38,9 @@ enum EnvType {
 };
 
 // We use the priority scale of the Completely Fair Scheduler (CFS)
-#define MIN_PRIORITY -20
-#define DEFAULT_PRIORITY 0
-#define MAX_PRIORITY 19
+#define MIN_PRIORITY 0
+#define DEFAULT_PRIORITY 20
+#define MAX_PRIORITY 39
 
 struct Env {
 	struct Trapframe env_tf;  // Saved registers

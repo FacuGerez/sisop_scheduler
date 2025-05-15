@@ -102,7 +102,7 @@ sched_yield(void)
 		env_run(e);
 	}
 
-	if (curenv) {
+	if (curenv && curenv->env_status == ENV_RUNNING) {
 		env_run(curenv);
 	}
 

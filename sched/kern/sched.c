@@ -6,7 +6,7 @@
 #include <kern/monitor.h>
 #include <kern/sched.h>
 
-sched_history history_scheduler;
+SchedHistory history_scheduler;
 
 void
 show_sched_history()
@@ -35,7 +35,7 @@ sched_init()
 }
 
 void
-sched_add_env(env_info *e)
+sched_add_env(envInfo *e)
 {
 	// Add the environment to the history
 	if (history_scheduler.counter >= SIZE_ENVS) {
@@ -54,12 +54,9 @@ sched_add_env(env_info *e)
 void
 sched_update_priority(struct Env *e)
 {
-	for (int i = 0; i < NENV; i++) {
-		if (envs[i].env_id == e->env_id &&
-		    envs[i].priority > MIN_PRIORITY) {
-			envs[i].priority--;
+	if (e->priority > MIN_PRIORITY) {
+			e->priority--;
 		}
-	}
 }
 
 void sched_halt(void);
@@ -98,6 +95,16 @@ sched_yield(void)
 	// Be careful to not fall in "starvation" such that only one
 	// environment is selected and run every time.
 
+	if (history_scheduler.runs_counter % RUNS_UNTIL_UPGRADE == 0) {
+		// If I have runned enough times, I set the priority of the runneable environments 
+		// to the maximum priority (like MLFQ does). 
+		for (int i = 0; i < NENV; i++) {
+			if (envs[i].env_status == ENV_RUNNABLE) {
+				envs[i].priority = MAX_PRIORITY;
+			}
+		}
+	}
+
 	struct Env *e = NULL;
 
 	int index_max_priority = -1;
@@ -120,7 +127,7 @@ sched_yield(void)
 		env_run(e);
 	}
 
-	if (curenv) {
+	if (curenv && curenv->env_status == ENV_RUNNING) {
 		// If I haven't a runnable job, I try to run the previous job.
 		env_run(curenv);
 	}

@@ -419,7 +419,7 @@ env_free(struct Env *e)
 	uint32_t pdeno, pteno;
 	physaddr_t pa;
 
-	env_info e_info;
+	envInfo e_info;
 	e_info.env_id = e->env_id;
 	e_info.sched_runs = e->sched_runs;
 	e_info.initial_env = e->initial_env;

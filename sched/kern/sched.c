@@ -98,12 +98,13 @@ sched_yield(void)
 	// Be careful to not fall in "starvation" such that only one
 	// environment is selected and run every time.
 
-	// Your code here - Priorities
-
 	struct Env *e = NULL;
 
 	int index_max_priority = -1;
 	for (int i = 0; i < NENV; i++) {
+		// I look:
+		// 1 - For the first runnable job.
+		// 2 - If I have one, I check if its priority is the biggest.
 		if (envs[i].env_status == ENV_RUNNABLE &&
 		    (index_max_priority == -1 ||
 		     envs[i].priority > envs[index_max_priority].priority)) {
@@ -113,14 +114,14 @@ sched_yield(void)
 	}
 
 	if (e) {
-		// agregarlo al array mirando que ya no esté el ID (mirando el
-		// history_scheduler.envs[0]: id) y le sumas +=1 a history_scheduler.envs[1]
-		// siempre += 1 al history_scheduler.runs
+		// If I have a runnable job, I decrease its priority (if its not minimum)
+		// and then I run it.
 		sched_update_priority(e);
 		env_run(e);
 	}
 
-	if (curenv && curenv->env_status == ENV_RUNNING) {
+	if (curenv) {
+		// If I haven't a runnable job, I try to run the previous job.
 		env_run(curenv);
 	}
 

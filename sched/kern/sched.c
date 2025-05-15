@@ -8,12 +8,16 @@
 
 sched_history history_scheduler;
 
-void show_sched_history() {
-	// for history_scheduler.envs mostrar los IDS (primera posición) y mostrar cuantas veces runneo accediendo a la segunda posicion
-	// mostrar los runs totales, que deberían ser igual a sum(for history_scheduler.envs[1])
+void
+show_sched_history()
+{
+	// for history_scheduler.envs mostrar los IDS (primera posición) y mostrar
+	// cuantas veces runneo accediendo a la segunda posicion mostrar los runs
+	// totales, que deberían ser igual a sum(for history_scheduler.envs[1])
 	cprintf("Scheduler history:\n");
 	for (int i = 0; i < history_scheduler.counter; i++) {
-		cprintf("Env ID: %d, Runs: %d, Initial Env: %d, Final Env: %d\n",
+		cprintf("Env ID: %d, Runs: %d, Initial Env: %d, Final Env: "
+		        "%d\n",
 		        history_scheduler.envs[i].env_id,
 		        history_scheduler.envs[i].sched_runs,
 		        history_scheduler.envs[i].initial_env,
@@ -22,30 +26,41 @@ void show_sched_history() {
 	cprintf("Total runs: %d\n", history_scheduler.runs_counter);
 }
 
-void sched_init() {
+void
+sched_init()
+{
 	// Initialize the scheduler
 	history_scheduler.counter = 0;
 	history_scheduler.runs_counter = 0;
 }
 
-void sched_add_env(env_info *e) {
+void
+sched_add_env(env_info *e)
+{
 	// Add the environment to the history
 	if (history_scheduler.counter >= SIZE_ENVS) {
 		return;
 	}
 	history_scheduler.envs[history_scheduler.counter].env_id = e->env_id;
-	history_scheduler.envs[history_scheduler.counter].sched_runs = e->sched_runs;
-	history_scheduler.envs[history_scheduler.counter].initial_env = e->initial_env;
-	history_scheduler.envs[history_scheduler.counter].final_env = history_scheduler.runs_counter;
+	history_scheduler.envs[history_scheduler.counter].sched_runs =
+	        e->sched_runs;
+	history_scheduler.envs[history_scheduler.counter].initial_env =
+	        e->initial_env;
+	history_scheduler.envs[history_scheduler.counter].final_env =
+	        history_scheduler.runs_counter;
 	history_scheduler.counter++;
 }
 
-void sched_update_priority(struct Env *e) {
+void
+sched_update_priority(struct Env *e)
+{
 	for (int i = 0; i < NENV; i++) {
-		if (envs[i].env_id == e->env_id && envs[i].priority > MIN_PRIORITY) {
+		if (envs[i].env_id == e->env_id &&
+		    envs[i].priority > MIN_PRIORITY) {
 			envs[i].priority--;
 		}
-	}}
+	}
+}
 
 void sched_halt(void);
 
@@ -74,7 +89,7 @@ sched_yield(void)
 	// Your code here - Round robin
 #endif
 
-#ifdef SCHED_PRIORITIES	
+#ifdef SCHED_PRIORITIES
 	// Implement simple priorities scheduling.
 	//
 	// Environments now have a "priority" so it must be consider
@@ -85,18 +100,21 @@ sched_yield(void)
 
 	// Your code here - Priorities
 
-	struct Env* e = NULL;
+	struct Env *e = NULL;
 
 	int index_max_priority = -1;
 	for (int i = 0; i < NENV; i++) {
-		if (envs[i].env_status == ENV_RUNNABLE && (index_max_priority == -1 || envs[i].priority > envs[index_max_priority].priority)) {
+		if (envs[i].env_status == ENV_RUNNABLE &&
+		    (index_max_priority == -1 ||
+		     envs[i].priority > envs[index_max_priority].priority)) {
 			index_max_priority = i;
 			e = &envs[i];
 		}
 	}
 
 	if (e) {
-		// agregarlo al array mirando que ya no esté el ID (mirando el history_scheduler.envs[0]: id) y le sumas +=1 a history_scheduler.envs[1]
+		// agregarlo al array mirando que ya no esté el ID (mirando el
+		// history_scheduler.envs[0]: id) y le sumas +=1 a history_scheduler.envs[1]
 		// siempre += 1 al history_scheduler.runs
 		sched_update_priority(e);
 		env_run(e);

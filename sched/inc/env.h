@@ -54,7 +54,7 @@ struct Env {
 
 
 	int priority;
-	uint32_t sched_runs; // Number of times the env has run
+	uint32_t sched_runs;  // Number of times the env has run
 	uint32_t initial_env;
 
 	// Address space

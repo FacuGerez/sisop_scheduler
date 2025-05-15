@@ -113,12 +113,14 @@ sys_ipc_recv(void *dstva)
 	return syscall(SYS_ipc_recv, 1, (uint32_t) dstva, 0, 0, 0, 0);
 }
 
-int sys_get_env_priority(void) 
+int
+sys_get_env_priority(void)
 {
 	return syscall(SYS_get_env_priority, 0, 0, 0, 0, 0, 0);
 }
 
-int sys_decrease_env_priority(uint32_t new_priority)
+int
+sys_decrease_env_priority(uint32_t new_priority)
 {
-	return syscall(SYS_decrease_env_priority, new_priority, 0, 0, 0, 0, 0);
+	return syscall(SYS_decrease_env_priority, 0, new_priority, 0, 0, 0, 0);
 }

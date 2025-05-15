@@ -151,7 +151,7 @@ sys_exofork(void)
 	newenv->env_status = ENV_NOT_RUNNABLE;
 	newenv->env_tf = curenv->env_tf;
 	newenv->env_tf.tf_regs.reg_eax = 0;
-	// 
+	//
 	newenv->priority = curenv->priority;
 
 	return newenv->env_id;
@@ -421,20 +421,21 @@ sys_ipc_recv(void *dstva)
 
 	curenv->env_ipc_dstva = dstva;
 	curenv->env_status = ENV_NOT_RUNNABLE;
-	
+
 	sys_yield();
 	panic("sys_ipc_recv should not return!");
 	return 0;
 }
 
-static int 
-sys_get_priority_job() 
+static int
+sys_get_priority_job()
 {
 	return curenv->priority;
 }
 
 static int
-sys_set_priority_job(uint32_t new_priority) {
+sys_set_priority_job(uint32_t new_priority)
+{
 	if (new_priority < curenv->priority) {
 		curenv->priority = new_priority;
 	}
@@ -475,13 +476,12 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 		return sys_ipc_try_send(a1, a2, (void *) a3, a4);
 	case SYS_env_set_pgfault_upcall:
 		return sys_env_set_pgfault_upcall(a1, (void *) a2);
-	case SYS_yield:
-		sys_yield();  // No return
-		return 0;
 	case SYS_get_env_priority:
 		return sys_get_priority_job();
 	case SYS_decrease_env_priority:
 		return sys_set_priority_job(a1);
+	case SYS_yield:
+		sys_yield();  // No return
 	default:
 		return -E_INVAL;
 	}

@@ -119,6 +119,9 @@ env_init(void)
 		envs[i].env_id = 0;
 		envs[i].env_status = ENV_FREE;
 		envs[i].env_link = (envs + i + 1);
+		envs[i].priority = DEFAULT_PRIORITY;
+		envs[i].sched_runs = 0;
+		envs[i].initial_env = 0;
 	}
 	envs[NENV - 1].env_link = NULL;
 	env_free_list = envs;

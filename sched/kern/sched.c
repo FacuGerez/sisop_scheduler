@@ -61,6 +61,49 @@ sched_update_priority(struct Env *e)
 
 void sched_halt(void);
 
+void 
+priority_scheduler()
+{
+	if (history_scheduler.runs_counter % RUNS_UNTIL_UPGRADE == 0) {
+		// If I have runned enough times, I set the priority of the runneable environments 
+		// to the maximum priority (like MLFQ does). 
+		for (int i = 0; i < NENV; i++) {
+			if (envs[i].env_status == ENV_RUNNABLE) {
+				envs[i].priority = MAX_PRIORITY;
+			}
+		}
+	}
+
+	struct Env *e = NULL;
+	int index_max_priority = -1;
+	for (int i = 0; i < NENV; i++) {
+		// I look:
+		// 1 - For the first runnable job.
+		// 2 - If I have one, I check if its priority is the biggest.
+		if (envs[i].env_status == ENV_RUNNABLE &&
+		    (index_max_priority == -1 ||
+		     envs[i].priority > envs[index_max_priority].priority)) {
+			index_max_priority = i;
+			e = &envs[i];
+		}
+	}
+
+	if (e) {
+		// If I have a runnable job, I decrease its priority (if its not minimum)
+		// and then I run it.
+		sched_update_priority(e);
+		env_run(e);
+	}
+
+	if (curenv && curenv->env_status == ENV_RUNNING) {
+		// If I haven't a runnable job, I try to run the previous job.
+		env_run(curenv);
+	}
+
+	// If I haven't more jobs, I go to the halt state.
+	sched_halt();
+}
+
 // Choose a user environment to run and run it.
 void
 sched_yield(void)
@@ -87,52 +130,9 @@ sched_yield(void)
 #endif
 
 #ifdef SCHED_PRIORITIES
-	// Implement simple priorities scheduling.
-	//
-	// Environments now have a "priority" so it must be consider
-	// when the selection is performed.
-	//
-	// Be careful to not fall in "starvation" such that only one
-	// environment is selected and run every time.
 
-	if (history_scheduler.runs_counter % RUNS_UNTIL_UPGRADE == 0) {
-		// If I have runned enough times, I set the priority of the runneable environments 
-		// to the maximum priority (like MLFQ does). 
-		for (int i = 0; i < NENV; i++) {
-			if (envs[i].env_status == ENV_RUNNABLE) {
-				envs[i].priority = MAX_PRIORITY;
-			}
-		}
-	}
+	priority_scheduler();
 
-	struct Env *e = NULL;
-
-	int index_max_priority = -1;
-	for (int i = 0; i < NENV; i++) {
-		// I look:
-		// 1 - For the first runnable job.
-		// 2 - If I have one, I check if its priority is the biggest.
-		if (envs[i].env_status == ENV_RUNNABLE &&
-		    (index_max_priority == -1 ||
-		     envs[i].priority > envs[index_max_priority].priority)) {
-			index_max_priority = i;
-			e = &envs[i];
-		}
-	}
-
-	if (e) {
-		// If I have a runnable job, I decrease its priority (if its not minimum)
-		// and then I run it.
-		sched_update_priority(e);
-		env_run(e);
-	}
-
-	if (curenv && curenv->env_status == ENV_RUNNING) {
-		// If I haven't a runnable job, I try to run the previous job.
-		env_run(curenv);
-	}
-
-	sched_halt();
 #endif
 
 	// Without scheduler, keep runing the last environment while it exists

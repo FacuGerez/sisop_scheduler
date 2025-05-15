@@ -37,7 +37,9 @@ enum EnvType {
 	ENV_TYPE_USER = 0,
 };
 
-// We use the priority scale of the Completely Fair Scheduler (CFS)
+// We use the priority scale of the Completely Fair Scheduler (CFS) but moving its basis in +20 because 
+// the errors are -1, -2 (in inc/error.h) and in the syscalls could be confusing having negative priorities 
+// with these error codes.
 #define MIN_PRIORITY 0
 #define DEFAULT_PRIORITY 20
 #define MAX_PRIORITY 39
@@ -53,7 +55,7 @@ struct Env {
 	int env_cpunum;           // The CPU that the env is running on
 
 
-	int priority;
+	uint8_t priority;
 	uint32_t sched_runs;  // Number of times the env has run
 	uint32_t initial_env;
 

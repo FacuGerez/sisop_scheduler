@@ -32,3 +32,37 @@ Los registros restantes tienen los valores esperados, principalmente:
 3. ```esp```: 0xEEBFE000 (4005552128 en base 10)
 
 ![image](img_debug/7.jpg)
+
+### Parte 3: Scheduling con prioridades.
+
+Se implementó una lógica sencilla haciendo una política similar a la de Multi-Level Feedback Queue, y según el libro Three Easy Pieces (capítulo 8: `Scheduling: The Multi-Level Feedback Queue`, página 10 del propio capítulo) manteniendo algunas de sus reglas, y citamos:
+
+```
+• Rule 1: If Priority(A) > Priority(B), A runs (B doesn’t).
+```
+
+Se cumple por razones lógicas, si no no seria un scheduling ponderativo respecto a la prioridad.
+
+```
+• Rule 2: If Priority(A) = Priority(B), A & B run in round-robin fashion using the time slice (quantum length) of the given queue.
+```
+
+No se utiliza RR, de haber dos jobs con la misma prioridad se va a ejecutar el primero que se encuentre (porque se utiliza > (mayor estricto)).
+
+```
+• Rule 3: When a job enters the system, it is placed at the highest priority (the topmost queue).
+```
+
+Cuando un job entra al sistema, se lo setea a una prioridad media, definida en nuestro caso como DEFAULT_PRIORITY = 20.
+
+```
+• Rule 4: Once a job uses up its time allotment at a given level (regardless of how many times it has given up the CPU), its priority is reduced (i.e., it moves down one queue)._
+```
+
+Acá se utiliza una regla similar: en una vez que se terminó de ejecutar en un time-slice un job, se le baja la prioridad en 1 (si es que ya no es lo misma).
+
+```
+• Rule 5: After some time period S, move all the jobs in the system to the topmost queue.
+```
+
+Aca lo que se realiza es que despues de N (`RUNS_UNTIL_UPGRADE = 40`, en nuestro caso (usamos 40 porque era justo lo que daba el intervalo de prioridades según la escala de CFS)) ejecuciones del scheduler (similar a hacerlo con el tiempo directamente, ya que el tiempo seria `N * t` siendo t el tiempo del time slice), se llevan todas las prioridades a la máxima posible (`MAX_PRIORITY = 39`, en nuestro caso)

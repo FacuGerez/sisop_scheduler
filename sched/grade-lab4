@@ -235,6 +235,11 @@ def test_faultevilhandler():
     r.match(E(".$E1. user_mem_check assertion failure for va (f0100|eebfe)..."),
             E(".$E1. free env $E1"))
 
+@test(1)
+def test_setenvpriority():
+    r.user_test("setenvpriority")
+    r.match()
+
 end_part("5")
 
 run_tests()

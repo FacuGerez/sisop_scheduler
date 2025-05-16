@@ -119,6 +119,9 @@ env_init(void)
 		envs[i].env_id = 0;
 		envs[i].env_status = ENV_FREE;
 		envs[i].env_link = (envs + i + 1);
+		envs[i].priority = DEFAULT_PRIORITY;
+		envs[i].sched_runs = 0;
+		envs[i].initial_env = 0;
 	}
 	envs[NENV - 1].env_link = NULL;
 	env_free_list = envs;
@@ -416,7 +419,7 @@ env_free(struct Env *e)
 	uint32_t pdeno, pteno;
 	physaddr_t pa;
 
-	env_info e_info;
+	envInfo e_info;
 	e_info.env_id = e->env_id;
 	e_info.sched_runs = e->sched_runs;
 	e_info.initial_env = e->initial_env;
@@ -521,7 +524,9 @@ env_run(struct Env *e)
 		curenv->env_status = ENV_RUNNABLE;
 	}
 
+	// TODO: Mover si es necesario.
 	e->sched_runs++;
+
 	curenv = e;
 	curenv->env_status = ENV_RUNNING;
 	curenv->env_runs++;

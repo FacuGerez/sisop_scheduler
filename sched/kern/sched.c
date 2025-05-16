@@ -6,13 +6,18 @@
 #include <kern/monitor.h>
 #include <kern/sched.h>
 
+SchedHistory history_scheduler;
 
-void show_sched_history() {
-	// for history_scheduler.envs mostrar los IDS (primera posición) y mostrar cuantas veces runneo accediendo a la segunda posicion
-	// mostrar los runs totales, que deberían ser igual a sum(for history_scheduler.envs[1])
+void
+show_sched_history()
+{
+	// for history_scheduler.envs mostrar los IDS (primera posición) y mostrar
+	// cuantas veces runneo accediendo a la segunda posicion mostrar los runs
+	// totales, que deberían ser igual a sum(for history_scheduler.envs[1])
 	cprintf("Scheduler history:\n");
 	for (int i = 0; i < history_scheduler.counter; i++) {
-		cprintf("Env ID: %d, Runs: %d, Initial Env: %d, Final Env: %d\n",
+		cprintf("Env ID: %d, Runs: %d, Initial Env: %d, Final Env: "
+		        "%d\n",
 		        history_scheduler.envs[i].env_id,
 		        history_scheduler.envs[i].sched_runs,
 		        history_scheduler.envs[i].initial_env,
@@ -21,31 +26,90 @@ void show_sched_history() {
 	cprintf("Total runs: %d\n", history_scheduler.runs_counter);
 }
 
-void sched_init() {
+void
+sched_init()
+{
 	// Initialize the scheduler
 	history_scheduler.counter = 0;
 	history_scheduler.runs_counter = 0;
 }
 
-void sched_add_env(env_info *e) {
+void
+sched_add_env(envInfo *e)
+{
 	// Add the environment to the history
 	if (history_scheduler.counter >= SIZE_ENVS) {
 		return;
 	}
 	history_scheduler.envs[history_scheduler.counter].env_id = e->env_id;
-	history_scheduler.envs[history_scheduler.counter].sched_runs = e->sched_runs;
-	history_scheduler.envs[history_scheduler.counter].initial_env = e->initial_env;
-	history_scheduler.envs[history_scheduler.counter].final_env = history_scheduler.runs_counter;
+	history_scheduler.envs[history_scheduler.counter].sched_runs =
+	        e->sched_runs;
+	history_scheduler.envs[history_scheduler.counter].initial_env =
+	        e->initial_env;
+	history_scheduler.envs[history_scheduler.counter].final_env =
+	        history_scheduler.runs_counter;
 	history_scheduler.counter++;
 }
 
+void
+sched_update_priority(struct Env *e)
+{
+	if (e->priority > MIN_PRIORITY) {
+		e->priority--;
+	}
+}
+
 void sched_halt(void);
+
+void
+priority_scheduler()
+{
+	if (history_scheduler.runs_counter % RUNS_UNTIL_UPGRADE == 0) {
+		// If I have runned enough times, I set the priority of the runneable environments
+		// to the maximum priority (like MLFQ does).
+		for (int i = 0; i < NENV; i++) {
+			if (envs[i].env_status == ENV_RUNNABLE) {
+				envs[i].priority = MAX_PRIORITY;
+			}
+		}
+	}
+
+	struct Env *e = NULL;
+	int index_max_priority = -1;
+	for (int i = 0; i < NENV; i++) {
+		// I look:
+		// 1 - For the first runnable job.
+		// 2 - If I have one, I check if its priority is the biggest.
+		if (envs[i].env_status == ENV_RUNNABLE &&
+		    (index_max_priority == -1 ||
+		     envs[i].priority > envs[index_max_priority].priority)) {
+			index_max_priority = i;
+			e = &envs[i];
+		}
+	}
+
+	if (e) {
+		// If I have a runnable job, I decrease its priority (if its not
+		// minimum) and then I run it.
+		sched_update_priority(e);
+		env_run(e);
+	}
+
+	if (curenv && curenv->env_status == ENV_RUNNING) {
+		// If I haven't a runnable job, I try to run the previous job.
+		env_run(curenv);
+	}
+
+	// If I haven't more jobs, I go to the halt state.
+	sched_halt();
+}
 
 // Choose a user environment to run and run it.
 void
 sched_yield(void)
 {
-history_scheduler.runs_counter++;
+	history_scheduler.runs_counter++;
+
 #ifdef SCHED_ROUND_ROBIN
 	// Implement simple round-robin scheduling.
 	//
@@ -84,29 +148,8 @@ history_scheduler.runs_counter++;
 #endif
 
 #ifdef SCHED_PRIORITIES
-	// Implement simple priorities scheduling.
-	//
-	// Environments now have a "priority" so it must be consider
-	// when the selection is performed.
-	//
-	// Be careful to not fall in "starvation" such that only one
-	// environment is selected and run every time.
 
-	// Your code here - Priorities
-
-	int index_max_priority = -1;
-	for (i = 0; i < NENV; i++) {
-		if (envs[i].env_status == ENV_RUNNABLE && (index_max_priority == -1 || envs[i].priority > envs[index_max_priority].priority)) {
-			index_max_priority = i;
-			curenv = envs[i];
-		}
-	}
-
-	if (curenv) {
-		// agregarlo al array mirando que ya no esté el ID (mirando el history_scheduler.envs[0]: id) y le sumas +=1 a history_scheduler.envs[1]
-		// siempre += 1 al history_scheduler.runs
-		env_run(curenv);
-	}
+	priority_scheduler();
 
 #endif
 
@@ -139,6 +182,7 @@ sched_halt(void)
 	}
 	if (i == NENV) {
 		cprintf("No runnable environments in the system!\n");
+		show_sched_history();
 		while (1)
 			monitor(NULL);
 	}

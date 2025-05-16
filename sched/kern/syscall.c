@@ -151,6 +151,8 @@ sys_exofork(void)
 	newenv->env_status = ENV_NOT_RUNNABLE;
 	newenv->env_tf = curenv->env_tf;
 	newenv->env_tf.tf_regs.reg_eax = 0;
+	//
+	newenv->priority = curenv->priority;
 
 	return newenv->env_id;
 	// panic("sys_exofork not implemented");
@@ -425,6 +427,23 @@ sys_ipc_recv(void *dstva)
 	return 0;
 }
 
+static int
+sys_get_env_priority()
+{
+	return curenv->priority;
+}
+
+static int
+sys_set_env_priority(uint32_t new_priority)
+{
+	if (new_priority < curenv->priority && new_priority <= MAX_PRIORITY &&
+	    new_priority >= MIN_PRIORITY) {
+		curenv->priority = new_priority;
+	}
+	return 0;
+}
+
+
 // Dispatches to the correct kernel function, passing the arguments.
 int32_t
 syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, uint32_t a5)
@@ -458,6 +477,10 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 		return sys_ipc_try_send(a1, a2, (void *) a3, a4);
 	case SYS_env_set_pgfault_upcall:
 		return sys_env_set_pgfault_upcall(a1, (void *) a2);
+	case SYS_get_env_priority:
+		return sys_get_env_priority();
+	case SYS_set_env_priority:
+		return sys_set_env_priority(a1);
 	case SYS_yield:
 		sys_yield();  // No return
 	default:

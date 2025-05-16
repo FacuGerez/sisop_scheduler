@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "cpu.h": "c",
+        "env.h": "c",
+        "monitor.h": "c",
+        "picirq.h": "c"
+    }
+}

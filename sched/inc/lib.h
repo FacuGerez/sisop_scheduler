@@ -4,6 +4,7 @@
 // and is intended to be linked into all user-mode applications
 // (NOT the kernel or boot loader).
 
+#include "syscall.h"
 #ifndef JOS_INC_LIB_H
 #define JOS_INC_LIB_H 1
 
@@ -54,7 +55,7 @@ int sys_page_unmap(envid_t env, void *pg);
 int sys_ipc_try_send(envid_t to_env, uint32_t value, void *pg, int perm);
 int sys_ipc_recv(void *rcv_pg);
 int sys_get_env_priority(void);
-int sys_decrease_env_priority(uint32_t new_priority);
+int sys_set_env_priority(uint32_t new_priority);
 
 // This must be inlined.  Exercise for reader: why?
 static inline envid_t __attribute__((always_inline))

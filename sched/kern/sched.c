@@ -131,10 +131,10 @@ sched_yield(void)
 
 	int start_index = curenv ? ENVX(curenv->env_id) + 1 : 0;
 	for (int i = 0; i < NENV; i++) {
-	int idx = (start_index + i) % NENV;
-	if (envs[idx].env_status == ENV_RUNNABLE) {
-		e = &envs[idx];
-		break;
+		int idx = (start_index + i) % NENV;
+		if (envs[idx].env_status == ENV_RUNNABLE) {
+			e = &envs[idx];
+			break;
 		}
 	}
 	if (e) {

@@ -17,7 +17,7 @@ enum {
 	SYS_ipc_try_send,
 	SYS_ipc_recv,
 	SYS_get_env_priority,
-	SYS_decrease_env_priority,
+	SYS_set_env_priority,
 	NSYSCALLS
 };
 

@@ -428,13 +428,13 @@ sys_ipc_recv(void *dstva)
 }
 
 static int
-sys_get_priority_job()
+sys_get_job_priority()
 {
 	return curenv->priority;
 }
 
 static int
-sys_set_priority_job(uint32_t new_priority)
+sys_set_env_priority(uint32_t new_priority)
 {
 	if (new_priority < curenv->priority) {
 		curenv->priority = new_priority;
@@ -477,9 +477,9 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 	case SYS_env_set_pgfault_upcall:
 		return sys_env_set_pgfault_upcall(a1, (void *) a2);
 	case SYS_get_env_priority:
-		return sys_get_priority_job();
-	case SYS_decrease_env_priority:
-		return sys_set_priority_job(a1);
+		return sys_get_job_priority();
+	case SYS_set_env_priority:
+		return sys_set_env_priority(a1);
 	case SYS_yield:
 		sys_yield();  // No return
 	default:

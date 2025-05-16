@@ -63,6 +63,24 @@ history_scheduler.runs_counter++;
 	// below to halt the cpu.
 
 	// Your code here - Round robin
+	struct Env *e = NULL;
+
+	int start_index = curenv ? ENVX(curenv->env_id) + 1 : 0;
+	for (int i = 0; i < NENV; i++) {
+	int idx = (start_index + i) % NENV;
+	if (envs[idx].env_status == ENV_RUNNABLE) {
+		e = &envs[idx];
+		break;
+		}
+	}
+	if (e) {
+		env_run(e);
+	}
+
+	if (curenv && curenv->env_status == ENV_RUNNING) {
+		env_run(curenv);
+	}
+	sched_halt();
 #endif
 
 #ifdef SCHED_PRIORITIES

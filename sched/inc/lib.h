@@ -54,6 +54,7 @@ int sys_page_map(
 int sys_page_unmap(envid_t env, void *pg);
 int sys_ipc_try_send(envid_t to_env, uint32_t value, void *pg, int perm);
 int sys_ipc_recv(void *rcv_pg);
+
 int sys_get_env_priority(void);
 int sys_set_env_priority(uint32_t new_priority);
 

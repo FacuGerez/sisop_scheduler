@@ -88,3 +88,4 @@ kern/console.h
 kern/sched.h
 kern/picirq.h
 kern/kclock.h
+user/setenvpriority.c

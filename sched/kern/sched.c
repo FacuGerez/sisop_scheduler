@@ -55,18 +55,18 @@ void
 sched_update_priority(struct Env *e)
 {
 	if (e->priority > MIN_PRIORITY) {
-			e->priority--;
-		}
+		e->priority--;
+	}
 }
 
 void sched_halt(void);
 
-void 
+void
 priority_scheduler()
 {
 	if (history_scheduler.runs_counter % RUNS_UNTIL_UPGRADE == 0) {
-		// If I have runned enough times, I set the priority of the runneable environments 
-		// to the maximum priority (like MLFQ does). 
+		// If I have runned enough times, I set the priority of the runneable environments
+		// to the maximum priority (like MLFQ does).
 		for (int i = 0; i < NENV; i++) {
 			if (envs[i].env_status == ENV_RUNNABLE) {
 				envs[i].priority = MAX_PRIORITY;
@@ -89,8 +89,8 @@ priority_scheduler()
 	}
 
 	if (e) {
-		// If I have a runnable job, I decrease its priority (if its not minimum)
-		// and then I run it.
+		// If I have a runnable job, I decrease its priority (if its not
+		// minimum) and then I run it.
 		sched_update_priority(e);
 		env_run(e);
 	}
@@ -164,6 +164,7 @@ sched_halt(void)
 	}
 	if (i == NENV) {
 		cprintf("No runnable environments in the system!\n");
+		show_sched_history();
 		while (1)
 			monitor(NULL);
 	}

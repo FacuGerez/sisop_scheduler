@@ -120,7 +120,7 @@ sys_get_env_priority(void)
 }
 
 int
-sys_decrease_env_priority(uint32_t new_priority)
+sys_set_env_priority(uint32_t new_priority)
 {
 	return syscall(SYS_set_env_priority, 0, new_priority, 0, 0, 0, 0);
 }

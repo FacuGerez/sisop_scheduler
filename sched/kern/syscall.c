@@ -421,7 +421,7 @@ sys_ipc_recv(void *dstva)
 
 	curenv->env_ipc_dstva = dstva;
 	curenv->env_status = ENV_NOT_RUNNABLE;
-	
+
 	sys_yield();
 	panic("sys_ipc_recv should not return!");
 	return 0;
@@ -436,7 +436,8 @@ sys_get_env_priority()
 static int
 sys_set_env_priority(uint32_t new_priority)
 {
-	if (new_priority < curenv->priority && new_priority <= MAX_PRIORITY && new_priority >= MIN_PRIORITY) {
+	if (new_priority < curenv->priority && new_priority <= MAX_PRIORITY &&
+	    new_priority >= MIN_PRIORITY) {
 		curenv->priority = new_priority;
 	}
 	return 0;

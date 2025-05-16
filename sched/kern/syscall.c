@@ -436,7 +436,7 @@ sys_get_env_priority()
 static int
 sys_set_env_priority(uint32_t new_priority)
 {
-	if (new_priority < curenv->priority) {
+	if (new_priority < curenv->priority && new_priority <= MAX_PRIORITY && new_priority >= MIN_PRIORITY) {
 		curenv->priority = new_priority;
 	}
 	return 0;

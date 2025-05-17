@@ -263,4 +263,6 @@ Total runs: 75
 
 Si se observa los IDs de los jobs y se van viendo los mensajes `Hello, I am environment x, cpu y, priority 19` que es el mensaje inicial (y se imprime una vez ya se runneo por primera vez el job) y `Back in environment x, priority 18, cpu y` que es cuando se vuelve al job, se puede ver que se volvió a ejecutar el job del mismo ID y que su prioridad disminuyó. Tambien luego de las 40 ejecuciones se ve que los jobs arrancan a tener una priority de 39 (realmente se ve con los prints 38 porque ya se ejecutó el job para cuando se llega al print).
 
-Sumado a eso si se hace `ctrl + f` se puede ver que la cantidad de ejecuciones del job coinciden con lo mostrado en el mensaje de history_scheduler
+Sumado a eso si se hace `ctrl + f` se puede ver que la cantidad de ejecuciones del job coinciden con lo mostrado en el mensaje de history_scheduler en el campo de sched_runs, y que la suma de los sched_runs de todos los procesos da igual al `total_runs - 1` (el -1 porque la ultima vez que se ejecuta el scheduler no encuentra ningun job disponible para ejecutar).
+
+Luego la diferencia que se ve en cada job entre sched_runs y env_runs es porque el proceso también es ejecutado por y desde el trapframe (si en el directorio tocamos `ctrl + shift + f` y ponemos `env_run` podemos ver el llamado desde trap.c)

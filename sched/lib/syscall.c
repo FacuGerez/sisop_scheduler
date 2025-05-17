@@ -114,13 +114,13 @@ sys_ipc_recv(void *dstva)
 }
 
 int
-sys_get_env_priority(void)
+sys_get_env_priority(envid_t env_id)
 {
-	return syscall(SYS_get_env_priority, 0, 0, 0, 0, 0, 0);
+	return syscall(SYS_get_env_priority, env_id, 0, 0, 0, 0, 0);
 }
 
 int
-sys_set_env_priority(uint32_t new_priority)
+sys_set_env_priority(envid_t env_id, uint32_t new_priority)
 {
-	return syscall(SYS_set_env_priority, 0, new_priority, 0, 0, 0, 0);
+	return syscall(SYS_set_env_priority, env_id, new_priority, 0, 0, 0, 0);
 }

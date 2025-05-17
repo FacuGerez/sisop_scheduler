@@ -428,17 +428,25 @@ sys_ipc_recv(void *dstva)
 }
 
 static int
-sys_get_env_priority()
-{
-	return curenv->priority;
+sys_get_env_priority(envid_t envid)
+{	
+	struct Env *dstenv;
+	int r;
+	if ((r = envid2env(envid, &dstenv, 0)) < 0)
+		return r;
+	return dstenv->priority;
 }
 
 static int
-sys_set_env_priority(uint32_t new_priority)
-{
-	if (new_priority < curenv->priority && new_priority <= MAX_PRIORITY &&
+sys_set_env_priority(envid_t envid, uint32_t new_priority)
+{	
+	struct Env *dstenv;
+	int r;
+	if ((r = envid2env(envid, &dstenv, 0)) < 0)
+		return r;
+	if (new_priority < dstenv->priority && new_priority <= MAX_PRIORITY &&
 	    new_priority >= MIN_PRIORITY) {
-		curenv->priority = new_priority;
+		dstenv->priority = new_priority;
 	}
 	return 0;
 }
@@ -478,9 +486,9 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 	case SYS_env_set_pgfault_upcall:
 		return sys_env_set_pgfault_upcall(a1, (void *) a2);
 	case SYS_get_env_priority:
-		return sys_get_env_priority();
+		return sys_get_env_priority(a1);
 	case SYS_set_env_priority:
-		return sys_set_env_priority(a1);
+		return sys_set_env_priority(a1, a2);
 	case SYS_yield:
 		sys_yield();  // No return
 	default:

@@ -26,5 +26,4 @@ umain(int argc, char **argv)
 	uint16_t new_priority = sys_get_env_priority();
 
 	cprintf("New priority: %d\n", new_priority);
-
 }

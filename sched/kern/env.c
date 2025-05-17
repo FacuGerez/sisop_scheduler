@@ -121,6 +121,7 @@ env_init(void)
 		envs[i].env_link = (envs + i + 1);
 		envs[i].priority = DEFAULT_PRIORITY;
 		envs[i].run_first_time = true;
+		envs[i].run_sched_time = 0;
 		envs[i].initial_env = history_scheduler.runs_counter;
 	}
 	envs[NENV - 1].env_link = NULL;
@@ -231,6 +232,7 @@ env_alloc(struct Env **newenv_store, envid_t parent_id)
 	e->env_status = ENV_RUNNABLE;
 	e->run_first_time = true;
 	e->env_runs = 0;
+	e->run_sched_time = 0;
 	e->initial_env = history_scheduler.runs_counter;
 	e->priority = DEFAULT_PRIORITY;
 
@@ -407,6 +409,7 @@ env_create(uint8_t *binary, enum EnvType type)
 	env->priority = DEFAULT_PRIORITY;
 	env->run_first_time = true;
 	env->initial_env = history_scheduler.runs_counter;
+	env->run_sched_time = 0;
 }
 
 //
@@ -421,7 +424,7 @@ env_free(struct Env *e)
 
 	envInfo e_info;
 	e_info.env_id = e->env_id;
-	e_info.sched_runs = e->env_runs;
+	e_info.sched_runs = e->run_sched_time;
 	e_info.initial_env = e->initial_env;
 	e_info.final_env = history_scheduler.runs_counter;
 
@@ -524,10 +527,6 @@ env_run(struct Env *e)
 		curenv->env_status = ENV_RUNNABLE;
 	}
 
-	if (e->run_first_time) {
-		e->initial_env = history_scheduler.runs_counter;
-		e->run_first_time = false;
-	}
 
 	curenv = e;
 	curenv->env_status = ENV_RUNNING;

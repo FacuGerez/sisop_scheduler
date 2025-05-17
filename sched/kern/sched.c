@@ -9,6 +9,17 @@
 SchedHistory history_scheduler;
 
 void
+update_env_info(struct Env *e)
+{
+	// Update the environment information
+	if (e->run_first_time) {
+		e->initial_env = history_scheduler.runs_counter;
+		e->run_first_time = false;
+	}
+	e->run_sched_time++;
+}
+
+void
 show_sched_history()
 {
 	// for history_scheduler.envs mostrar los IDS (primera posición) y mostrar
@@ -64,7 +75,6 @@ void sched_halt(void);
 void
 priority_scheduler()
 {
-
 	history_scheduler.runs_counter++;
 
 	if (history_scheduler.runs_counter % RUNS_UNTIL_UPGRADE == 0) {
@@ -95,12 +105,14 @@ priority_scheduler()
 		// If I have a runnable job, I decrease its priority (if its not
 		// minimum) and then I run it.
 		sched_update_priority(e);
+		update_env_info(e);
 		env_run(e);
 		return;
 	}
 
 	if (curenv && curenv->env_status == ENV_RUNNING) {
 		// If I haven't a runnable job, I try to run the previous job.
+		update_env_info(curenv);
 		env_run(curenv);
 	}
 
@@ -112,7 +124,6 @@ priority_scheduler()
 void
 sched_yield(void)
 {
-
 #ifdef SCHED_ROUND_ROBIN
 	// Implement simple round-robin scheduling.
 	//
@@ -141,10 +152,12 @@ sched_yield(void)
 		}
 	}
 	if (e) {
+		update_env_info(e);
 		env_run(e);
 	}
 
 	if (curenv && curenv->env_status == ENV_RUNNING) {
+		update_env_info(curenv);
 		env_run(curenv);
 	}
 	sched_halt();
@@ -158,6 +171,7 @@ sched_yield(void)
 
 	// Without scheduler, keep runing the last environment while it exists
 	if (curenv) {
+		update_env_info(curenv);
 		env_run(curenv);
 	}
 

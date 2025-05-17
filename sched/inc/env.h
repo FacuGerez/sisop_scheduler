@@ -59,6 +59,7 @@ struct Env {
 	uint8_t priority;
 	bool run_first_time;
 	uint32_t initial_env;
+	uint32_t run_sched_time;
 
 	// Address space
 	pde_t *env_pgdir;  // Kernel virtual address of page dir

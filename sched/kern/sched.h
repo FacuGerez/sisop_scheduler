@@ -20,6 +20,8 @@ struct SchedHistory {
 
 extern SchedHistory history_scheduler;
 
+void update_env_info();
+
 void sched_init();
 
 void sched_add_env(envInfo *e);

@@ -58,7 +58,6 @@ struct Env {
 
 	uint8_t priority;
 	bool run_first_time;
-	uint32_t sched_runs;  // Number of times the env has run
 	uint32_t initial_env;
 
 	// Address space

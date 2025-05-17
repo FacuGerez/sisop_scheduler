@@ -93,6 +93,7 @@ priority_scheduler()
 		// minimum) and then I run it.
 		sched_update_priority(e);
 		env_run(e);
+		return;
 	}
 
 	if (curenv && curenv->env_status == ENV_RUNNING) {
@@ -108,7 +109,6 @@ priority_scheduler()
 void
 sched_yield(void)
 {
-	history_scheduler.runs_counter++;
 
 #ifdef SCHED_ROUND_ROBIN
 	// Implement simple round-robin scheduling.

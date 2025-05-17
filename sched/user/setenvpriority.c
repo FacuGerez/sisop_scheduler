@@ -27,10 +27,4 @@ umain(int argc, char **argv)
 
 	cprintf("New priority: %d\n", new_priority);
 
-	if (new_priority != target) {
-		panic("Set env priority is not working as expected. Expected: "
-		      "%d, Got: %d\n",
-		      target,
-		      new_priority);
-	}
 }

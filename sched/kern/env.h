@@ -9,8 +9,9 @@
 struct envInfo {
 	int env_id;
 	int sched_runs;
-	int initial_env;
-	int final_env;
+	int env_runs;
+	int initial_run;
+	int final_run;
 } typedef envInfo;
 
 extern struct Env *envs;           // All environments

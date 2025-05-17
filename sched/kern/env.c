@@ -122,7 +122,7 @@ env_init(void)
 		envs[i].priority = DEFAULT_PRIORITY;
 		envs[i].run_first_time = true;
 		envs[i].run_sched_time = 0;
-		envs[i].initial_env = history_scheduler.runs_counter;
+		envs[i].initial_run = history_scheduler.runs_counter;
 	}
 	envs[NENV - 1].env_link = NULL;
 	env_free_list = envs;
@@ -233,7 +233,7 @@ env_alloc(struct Env **newenv_store, envid_t parent_id)
 	e->run_first_time = true;
 	e->env_runs = 0;
 	e->run_sched_time = 0;
-	e->initial_env = history_scheduler.runs_counter;
+	e->initial_run = history_scheduler.runs_counter;
 	e->priority = DEFAULT_PRIORITY;
 
 	// Clear out all the saved register state,
@@ -408,7 +408,7 @@ env_create(uint8_t *binary, enum EnvType type)
 	env->env_type = type;
 	env->priority = DEFAULT_PRIORITY;
 	env->run_first_time = true;
-	env->initial_env = history_scheduler.runs_counter;
+	env->initial_run = history_scheduler.runs_counter;
 	env->run_sched_time = 0;
 }
 
@@ -425,8 +425,9 @@ env_free(struct Env *e)
 	envInfo e_info;
 	e_info.env_id = e->env_id;
 	e_info.sched_runs = e->run_sched_time;
-	e_info.initial_env = e->initial_env;
-	e_info.final_env = history_scheduler.runs_counter;
+	e_info.env_runs = e->env_runs;
+	e_info.initial_run = e->initial_run;
+	e_info.final_run = history_scheduler.runs_counter;
 
 	sched_add_env(&e_info);
 

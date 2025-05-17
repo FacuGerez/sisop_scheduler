@@ -58,7 +58,7 @@ struct Env {
 
 	uint8_t priority;
 	bool run_first_time;
-	uint32_t initial_env;
+	uint32_t initial_run;
 	uint32_t run_sched_time;
 
 	// Address space

@@ -35,6 +35,8 @@ Los registros restantes tienen los valores esperados, principalmente:
 
 ### Parte 3: Scheduling con prioridades.
 
+#### Implementación política
+
 Se implementó una lógica sencilla haciendo una política similar a la de Multi-Level Feedback Queue, y según el libro Three Easy Pieces (capítulo 8: `Scheduling: The Multi-Level Feedback Queue`, página 10 del propio capítulo) manteniendo algunas de sus reglas, y citamos:
 
 ```
@@ -66,3 +68,195 @@ Acá se utiliza una regla similar: en una vez que se terminó de ejecutar en un 
 ```
 
 Aca lo que se realiza es que despues de N (`RUNS_UNTIL_UPGRADE = 40`, en nuestro caso (usamos 40 porque era justo lo que daba el intervalo de prioridades según la escala de CFS)) ejecuciones del scheduler (similar a hacerlo con el tiempo directamente, ya que el tiempo seria `N * t` siendo t el tiempo del time slice), se llevan todas las prioridades a la máxima posible (`MAX_PRIORITY = 39`, en nuestro caso)
+
+#### Demostración de funcionamiento (Resultados de runnear el test user/setenvpriority)
+
+Dejamos al final de este informe el resultado de ejecutar el test implementado para mostrar que el comportamiento del scheduler es el esperado
+
+```
+Booting from ROM..6828 decimal is 15254 octal!
+Physical memory: 131072K available, base = 640K, extended = 130432K
+check_page_free_list() succeeded!
+check_page_alloc() succeeded!
+check_page() succeeded!
+check_kern_pgdir() succeeded!
+check_page_free_list() succeeded!
+check_page_installed_pgdir() succeeded!
+SMP: CPU 0 found 1 CPU(s)
+enabled interrupts: 1 2
+[00000000] new env 00001000
+0xf0140ae0
+[00000000] new env 00001001
+0xf0140ae0
+[00000000] new env 00001002
+0xf0140ae0
+[00000000] new env 00001003
+0xf0140ae0
+[00000000] new env 00001004
+0xf0140ae0
+[00000000] new env 00001005
+0xf0140ae0
+[00000000] new env 00001006
+0xf0140ae0
+[00000000] new env 00001007
+0xf0140ae0
+[00000000] new env 00001008
+0xf0140ae0
+[00000000] new env 00001009
+0xf0140ae0
+Hello, I am environment 00001001, cpu 0, priority 19
+Hello, I am environment 00001002, cpu 0, priority 19
+Hello, I am environment 00001003, cpu 0, priority 19
+Hello, I am environment 00001004, cpu 0, priority 19
+Hello, I am environment 00001005, cpu 0, priority 19
+Hello, I am environment 00001006, cpu 0, priority 19
+Hello, I am environment 00001007, cpu 0, priority 19
+Hello, I am environment 00001008, cpu 0, priority 19
+Hello, I am environment 00001009, cpu 0, priority 19
+Hello, I am environment 00001000, cpu 0, priority 19
+Back in environment 00001001, priority 18, cpu 0
+Hello, I am environment 00001001, cpu 0, priority 18
+Back in environment 00001002, priority 18, cpu 0
+Hello, I am environment 00001002, cpu 0, priority 18
+Back in environment 00001003, priority 18, cpu 0
+Hello, I am environment 00001003, cpu 0, priority 18
+Back in environment 00001004, priority 18, cpu 0
+Hello, I am environment 00001004, cpu 0, priority 18
+Back in environment 00001005, priority 18, cpu 0
+Back in environment 00001006, priority 18, cpu 0
+Hello, I am environment 00001006, cpu 0, priority 18
+Back in environment 00001008, priority 18, cpu 0
+Hello, I am environment 00001008, cpu 0, priority 18
+Back in environment 00001009, priority 18, cpu 0
+Hello, I am environment 00001009, cpu 0, priority 18
+Back in environment 00001000, priority 17, cpu 0
+Hello, I am environment 00001000, cpu 0, priority 17
+Back in environment 00001001, priority 17, cpu 0
+Hello, I am environment 00001001, cpu 0, priority 17
+Back in environment 00001002, priority 17, cpu 0
+Back in environment 00001003, priority 17, cpu 0
+Hello, I am environment 00001003, cpu 0, priority 17
+Back in environment 00001004, priority 17, cpu 0
+Hello, I am environment 00001004, cpu 0, priority 17
+Hello, I am environment 00001005, cpu 0, priority 17
+Back in environment 00001006, priority 17, cpu 0
+Hello, I am environment 00001006, cpu 0, priority 17
+Back in environment 00001007, priority 17, cpu 0
+Hello, I am environment 00001007, cpu 0, priority 17
+Back in environment 00001008, priority 17, cpu 0
+Hello, I am environment 00001008, cpu 0, priority 17
+Back in environment 00001009, priority 17, cpu 0
+Hello, I am environment 00001009, cpu 0, priority 17
+Back in environment 00001000, priority 16, cpu 0
+Hello, I am environment 00001000, cpu 0, priority 16
+Back in environment 00001001, priority 16, cpu 0
+Hello, I am environment 00001001, cpu 0, priority 16
+Hello, I am environment 00001002, cpu 0, priority 16
+Back in environment 00001003, priority 16, cpu 0
+Hello, I am environment 00001003, cpu 0, priority 16
+Back in environment 00001004, priority 16, cpu 0
+Hello, I am environment 00001004, cpu 0, priority 16
+Back in environment 00001005, priority 16, cpu 0
+Hello, I am environment 00001005, cpu 0, priority 16
+Back in environment 00001006, priority 16, cpu 0
+Hello, I am environment 00001006, cpu 0, priority 16
+Back in environment 00001007, priority 16, cpu 0
+Hello, I am environment 00001007, cpu 0, priority 16
+Back in environment 00001000, priority 38, cpu 0
+Hello, I am environment 00001000, cpu 0, priority 38
+Back in environment 00001001, priority 38, cpu 0
+Hello, I am environment 00001001, cpu 0, priority 38
+Back in environment 00001002, priority 38, cpu 0
+Back in environment 00001003, priority 38, cpu 0
+Hello, I am environment 00001003, cpu 0, priority 38
+Back in environment 00001005, priority 38, cpu 0
+Hello, I am environment 00001005, cpu 0, priority 38
+Back in environment 00001006, priority 38, cpu 0
+Hello, I am environment 00001006, cpu 0, priority 38
+Back in environment 00001007, priority 38, cpu 0
+Hello, I am environment 00001007, cpu 0, priority 38
+Back in environment 00001009, priority 38, cpu 0
+Hello, I am environment 00001009, cpu 0, priority 38
+Back in environment 00001000, priority 37, cpu 0
+Back in environment 00001001, priority 37, cpu 0
+Set env priority: 34
+New priority: 34
+[00001001] exiting gracefully
+[00001001] free env 00001001
+Hello, I am environment 00001002, cpu 0, priority 37
+Back in environment 00001003, priority 37, cpu 0
+Set env priority: 34
+<span style="color: red;">New priority: 34</span>
+[00001003] exiting gracefully
+[00001003] free env 00001003
+Back in environment 00001004, priority 37, cpu 0
+Back in environment 00001005, priority 37, cpu 0
+Hello, I am environment 00001005, cpu 0, priority 37
+Back in environment 00001006, priority 37, cpu 0
+Set env priority: 34
+New priority: 34
+[00001006] exiting gracefully
+[00001006] free env 00001006
+Back in environment 00001007, priority 37, cpu 0
+Hello, I am environment 00001007, cpu 0, priority 37
+Back in environment 00001009, priority 37, cpu 0
+Hello, I am environment 00001000, cpu 0, priority 36
+Back in environment 00001002, priority 36, cpu 0
+Hello, I am environment 00001002, cpu 0, priority 36
+Hello, I am environment 00001004, cpu 0, priority 36
+Back in environment 00001005, priority 36, cpu 0
+Set env priority: 33
+New priority: 33
+[00001005] exiting gracefully
+[00001005] free env 00001005
+Back in environment 00001007, priority 36, cpu 0
+Set env priority: 33
+New priority: 33
+[00001007] exiting gracefully
+[00001007] free env 00001007
+Back in environment 00001000, priority 35, cpu 0
+Set env priority: 32
+New priority: 32
+[00001000] exiting gracefully
+[00001000] free env 00001000
+Back in environment 00001002, priority 35, cpu 0
+Set env priority: 32
+New priority: 32
+[00001002] exiting gracefully
+[00001002] free env 00001002
+Back in environment 00001004, priority 35, cpu 0
+Hello, I am environment 00001009, cpu 0, priority 35
+Set env priority: 31
+New priority: 31
+[00001004] exiting gracefully
+[00001004] free env 00001004
+Back in environment 00001009, priority 34, cpu 0
+Set env priority: 31
+New priority: 31
+[00001009] exiting gracefully
+[00001009] free env 00001009
+Back in environment 00001008, priority 15, cpu 0
+Hello, I am environment 00001008, cpu 0, priority 15
+Back in environment 00001008, priority 15, cpu 0
+Hello, I am environment 00001008, cpu 0, priority 15
+Back in environment 00001008, priority 15, cpu 0
+Set env priority: 12
+New priority: 12
+[00001008] exiting gracefully
+[00001008] free env 00001008
+No runnable environments in the system!
+Scheduler history:
+Env ID: 4097, Runs: 32, Initial Env: 2, Final Env: 50
+Env ID: 4099, Runs: 32, Initial Env: 4, Final Env: 52
+Env ID: 4102, Runs: 32, Initial Env: 7, Final Env: 55
+Env ID: 4101, Runs: 33, Initial Env: 6, Final Env: 61
+Env ID: 4103, Runs: 33, Initial Env: 8, Final Env: 62
+Env ID: 4096, Runs: 34, Initial Env: 1, Final Env: 64
+Env ID: 4098, Runs: 34, Initial Env: 3, Final Env: 65
+Env ID: 4100, Runs: 35, Initial Env: 5, Final Env: 68
+Env ID: 4105, Runs: 34, Initial Env: 10, Final Env: 69
+Env ID: 4104, Runs: 34, Initial Env: 9, Final Env: 73
+Total runs: 74
+```
+
+Si se observa los IDs de las palabras

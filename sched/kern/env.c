@@ -532,7 +532,6 @@ env_run(struct Env *e)
 	curenv = e;
 	curenv->env_status = ENV_RUNNING;
 	curenv->env_runs++;
-	history_scheduler.runs_counter++;
 
 	env_load_pgdir(curenv);
 

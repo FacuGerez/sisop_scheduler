@@ -64,6 +64,9 @@ void sched_halt(void);
 void
 priority_scheduler()
 {
+
+	history_scheduler.runs_counter++;
+
 	if (history_scheduler.runs_counter % RUNS_UNTIL_UPGRADE == 0) {
 		// If I have runned enough times, I set the priority of the runneable environments
 		// to the maximum priority (like MLFQ does).

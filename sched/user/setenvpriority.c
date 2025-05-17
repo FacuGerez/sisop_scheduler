@@ -16,8 +16,10 @@ umain(int argc, char **argv)
 	}
 	int priority = sys_get_env_priority();
 
+	cprintf("Get env priority: %d\n", priority);
 	int target = priority - 3 >= MIN_PRIORITY ? priority - 3 : MIN_PRIORITY;
 	sys_set_env_priority(target);
+
 
 	cprintf("Set env priority: %d\n", target);
 

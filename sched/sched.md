@@ -186,7 +186,7 @@ New priority: 34
 Hello, I am environment 00001002, cpu 0, priority 37
 Back in environment 00001003, priority 37, cpu 0
 Set env priority: 34
-<span style="color: red;">New priority: 34</span>
+New priority: 34 
 [00001003] exiting gracefully
 [00001003] free env 00001003
 Back in environment 00001004, priority 37, cpu 0
@@ -259,4 +259,8 @@ Env ID: 4104, Runs: 34, Initial Env: 9, Final Env: 73
 Total runs: 74
 ```
 
-Si se observa los IDs de las palabras
+Si se observa los IDs de los jobs y se van viendo los mensajes
+
+`Hello, I am environment x, cpu y, priority 19` que es el mensaje inicial (y se imprime una vez ya se runneo por primera vez el job) y `Back in environment x, priority 18, cpu y` que es cuando se vuelve al job, se puede ver que se volvió a ejecutar el job del mismo ID y que su prioridad disminuyó. Tambien luego de las 40 ejecuciones se ve que los jobs arrancan a tener una priority de 39 (realmente se ve con los prints 38 porque ya se ejecutó el job para cuando se llega al print).
+
+Sumado a eso si se hace `ctrl + f` se puede ver que la cantidad de ejecuciones del job coinciden con lo mostrado en el mensaje de history_scheduler

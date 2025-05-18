@@ -27,13 +27,14 @@ show_sched_history()
 	// totales, que deberían ser igual a sum(for history_scheduler.envs[1])
 	cprintf("Scheduler history:\n");
 	for (int i = 0; i < history_scheduler.counter; i++) {
-		cprintf("Env ID: %d; sched runs: %d; initial run: %d; final run: "
+		cprintf("Env ID: %d; sched runs: %d; initial run: %d; final "
+		        "run: "
 		        "%d; env runs: %d\n",
 		        history_scheduler.envs[i].env_id,
 		        history_scheduler.envs[i].sched_runs,
 		        history_scheduler.envs[i].initial_run,
 		        history_scheduler.envs[i].final_run,
-				history_scheduler.envs[i].env_runs);
+		        history_scheduler.envs[i].env_runs);
 	}
 	cprintf("Total runs: %d\n", history_scheduler.runs_counter);
 }
@@ -56,8 +57,7 @@ sched_add_env(envInfo *e)
 	history_scheduler.envs[history_scheduler.counter].env_id = e->env_id;
 	history_scheduler.envs[history_scheduler.counter].sched_runs =
 	        e->sched_runs;
-	history_scheduler.envs[history_scheduler.counter].env_runs =
-	        e->env_runs;
+	history_scheduler.envs[history_scheduler.counter].env_runs = e->env_runs;
 	history_scheduler.envs[history_scheduler.counter].initial_run =
 	        e->initial_run;
 	history_scheduler.envs[history_scheduler.counter].final_run =

@@ -429,7 +429,7 @@ sys_ipc_recv(void *dstva)
 
 static int
 sys_get_env_priority(envid_t envid)
-{	
+{
 	struct Env *dstenv;
 	int r;
 	if ((r = envid2env(envid, &dstenv, 0)) < 0)
@@ -439,7 +439,7 @@ sys_get_env_priority(envid_t envid)
 
 static int
 sys_set_env_priority(envid_t envid, uint32_t new_priority)
-{	
+{
 	struct Env *dstenv;
 	int r;
 	if ((r = envid2env(envid, &dstenv, 0)) < 0)

@@ -61,13 +61,13 @@ Cuando un job entra al sistema, se lo setea a una prioridad media, definida en n
 • Rule 4: Once a job uses up its time allotment at a given level (regardless of how many times it has given up the CPU), its priority is reduced (i.e., it moves down one queue)._
 ```
 
-Acá se utiliza una regla similar: en una vez que se terminó de ejecutar en un time-slice un job, se le baja la prioridad en 1 (si es que ya no es lo misma).
+Acá se utiliza una regla similar: una vez que se terminó de ejecutar un time-slice de un job, se le baja la prioridad en 1 (si es que no es la mínima, en cuyo caso se deja el job con dicha prioridad).
 
 ```
 • Rule 5: After some time period S, move all the jobs in the system to the topmost queue.
 ```
 
-Aca lo que se realiza es que despues de N (`RUNS_UNTIL_UPGRADE = 40`, en nuestro caso (usamos 40 porque era justo lo que daba el intervalo de prioridades según la escala de CFS)) ejecuciones del scheduler (similar a hacerlo con el tiempo directamente, ya que el tiempo seria `N * t` siendo t el tiempo del time slice), se llevan todas las prioridades a la máxima posible (`MAX_PRIORITY = 39`, en nuestro caso)
+Acá lo que se realiza es que despues de N (`RUNS_UNTIL_UPGRADE = 40`, en nuestro caso (usamos 40 porque era el intervalo de prioridades según la escala de CFS)) ejecuciones del scheduler (similar a hacerlo con el tiempo directamente, ya que el tiempo seria `N * t` siendo t el tiempo del time slice), se llevan todas las prioridades a la máxima posible (`MAX_PRIORITY = 39`, en nuestro caso).
 
 #### Demostración de funcionamiento (Resultados de runnear el test user/setenvpriority)
 
